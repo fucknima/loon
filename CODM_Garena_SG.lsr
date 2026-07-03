@@ -1,0 +1,116 @@
+# ============================================================
+# Loon Remote Rule - CODM Global + Garena
+# 已去掉韩服 / Apple / FINAL
+# 使用方式：[Remote Rule] 里用 policy=新国时延优选
+# ============================================================
+
+# CODM / Activision
+DOMAIN-SUFFIX,callofduty.com
+DOMAIN-SUFFIX,callofdutymobile.com
+DOMAIN-SUFFIX,codm.activision.com
+DOMAIN-SUFFIX,activision.com
+DOMAIN-SUFFIX,activision-api.com
+DOMAIN-SUFFIX,activisionblizzard.com
+DOMAIN-SUFFIX,demonware.net
+DOMAIN-KEYWORD,callofduty
+DOMAIN-KEYWORD,callofdutymobile
+DOMAIN-KEYWORD,codm
+DOMAIN-KEYWORD,activision
+DOMAIN-KEYWORD,demonware
+
+# CODM 活动 / 商店 / 跳转
+DOMAIN-SUFFIX,store.callofdutymobile.com
+DOMAIN-SUFFIX,profile.callofduty.com
+DOMAIN-SUFFIX,my.callofduty.com
+DOMAIN-SUFFIX,support.activision.com
+DOMAIN-SUFFIX,ott-commerce.com
+DOMAIN-SUFFIX,onelink.me
+DOMAIN-SUFFIX,appsflyer.com
+DOMAIN-SUFFIX,appsflyersdk.com
+
+# 客服
+DOMAIN-SUFFIX,helpshift.com
+DOMAIN-SUFFIX,activision.helpshift.com
+DOMAIN-SUFFIX,codm.helpshift.com
+DOMAIN-SUFFIX,codm.mail.helpshift.com
+DOMAIN-KEYWORD,helpshift
+
+# Garena / 东南亚服
+DOMAIN-SUFFIX,garena.com
+DOMAIN-SUFFIX,garena.sg
+DOMAIN-SUFFIX,garena.co.id
+DOMAIN-SUFFIX,garena.ph
+DOMAIN-SUFFIX,garena.tw
+DOMAIN-SUFFIX,garena.co.th
+DOMAIN-SUFFIX,garena.vn
+DOMAIN-SUFFIX,garena.my
+DOMAIN-SUFFIX,garenanow.com
+DOMAIN-SUFFIX,garena.live
+DOMAIN-KEYWORD,garena
+DOMAIN-KEYWORD,garenanow
+
+# Garena 登录 / 账号 / 认证
+DOMAIN-SUFFIX,account.garena.com
+DOMAIN-SUFFIX,sso.garena.com
+DOMAIN-SUFFIX,auth.garena.com
+DOMAIN-SUFFIX,connect.garena.com
+DOMAIN-SUFFIX,login.garena.com
+DOMAIN-SUFFIX,oauth.garena.com
+DOMAIN-SUFFIX,api.garena.com
+
+# Garena 内容 / 支付 / 活动
+DOMAIN-SUFFIX,content.garena.com
+DOMAIN-SUFFIX,shop.garena.sg
+DOMAIN-SUFFIX,pay.garena.com
+DOMAIN-SUFFIX,topup.garena.com
+
+# Sea / Garena 母公司体系
+DOMAIN-SUFFIX,sea.com
+DOMAIN-SUFFIX,seagroup.com
+
+# Facebook 登录
+DOMAIN-SUFFIX,facebook.com
+DOMAIN-SUFFIX,fb.com
+DOMAIN-SUFFIX,fbcdn.net
+DOMAIN-SUFFIX,fbsbx.com
+DOMAIN-SUFFIX,messenger.com
+
+# Google 登录 / Firebase
+DOMAIN-SUFFIX,accounts.google.com
+DOMAIN-SUFFIX,oauth2.googleapis.com
+DOMAIN-SUFFIX,www.googleapis.com
+DOMAIN-SUFFIX,googleapis.com
+DOMAIN-SUFFIX,gstatic.com
+DOMAIN-SUFFIX,googleusercontent.com
+DOMAIN-SUFFIX,ggpht.com
+DOMAIN-SUFFIX,play.google.com
+DOMAIN-SUFFIX,android.clients.google.com
+DOMAIN-SUFFIX,mtalk.google.com
+DOMAIN-SUFFIX,app-measurement.com
+DOMAIN-SUFFIX,firebaseinstallations.googleapis.com
+DOMAIN-SUFFIX,firebase-settings.crashlytics.com
+
+# Tencent / Level Infinite 公共资源
+DOMAIN-SUFFIX,qcloud.com
+DOMAIN-SUFFIX,myqcloud.com
+DOMAIN-SUFFIX,tencent-cloud.net
+DOMAIN-SUFFIX,tencentcloudapi.com
+DOMAIN-SUFFIX,tencentcs.com
+DOMAIN-SUFFIX,intlgame.com
+DOMAIN-KEYWORD,tencentcloud
+DOMAIN-KEYWORD,tencent-cloud
+DOMAIN-KEYWORD,intlgame
+
+# CDN
+DOMAIN-SUFFIX,akamaihd.net
+DOMAIN-SUFFIX,akamaized.net
+DOMAIN-SUFFIX,akamaiedge.net
+DOMAIN-SUFFIX,edgesuite.net
+DOMAIN-SUFFIX,edgekey.net
+DOMAIN-SUFFIX,akadns.net
+DOMAIN-SUFFIX,cloudfront.net
+
+# Battle.net / Blizzard
+DOMAIN-SUFFIX,battle.net
+DOMAIN-SUFFIX,blizzard.com
+DOMAIN-SUFFIX,blizzard.net
