@@ -1,5 +1,5 @@
 #!name=IPPure IP纯净度检测
-#!desc=长按节点，通过 IPPure + ipapi.is 双源检测；结果分区显示并明确标注每项数据来源
+#!desc=长按节点，通过 IPPure + ipapi.is 双源检测；IPv4联合判断，IPv6自动以ipapi.is为主并明确提示IPPure不评分
 #!author=fucknima
 #!system=iOS,iPadOS,tvOS,macOS
 #!loon_version=3.3.2(877)
