@@ -1,4 +1,4 @@
-#!name=IPPure IP纯净度检测
+#!name=IP纯净度检测
 #!desc=长按节点，通过 IPPure + ipapi.is 双源检测；IPv4联合判断，IPv6自动以ipapi.is为主并明确提示IPPure不评分
 #!author=fucknima
 #!system=iOS,iPadOS,tvOS,macOS
@@ -7,4 +7,4 @@
 #!icon=https://ippure.com/favicon.ico
 
 [Script]
-generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness.js,tag=IPPure纯净度检测,timeout=30,img-url=shield.lefthalf.filled.system
+generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness.js,tag=IP纯净度检测,timeout=30,img-url=shield.lefthalf.filled.system
