@@ -1,5 +1,5 @@
 #!name=IPPure IP纯净度检测
-#!desc=长按节点，通过 IPPure + ipapi.is 双源检测；简洁展示风险评分、住宅/机房、原生/广播、VPN、代理、Tor、滥用、ASN和运营商
+#!desc=长按节点，通过 IPPure + ipapi.is 双源检测；结果分区显示并明确标注每项数据来源
 #!author=fucknima
 #!system=iOS,iPadOS,tvOS,macOS
 #!loon_version=3.3.2(877)
