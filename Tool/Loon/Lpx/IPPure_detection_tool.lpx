@@ -7,4 +7,4 @@
 #!icon=https://ippure.com/favicon.ico
 
 [Script]
-generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness.js, timeout=15, tag=IPPure纯净度检测, img-url=shield.lefthalf.filled.system
+generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness.js?v=2, timeout=15, tag=IPPure纯净度检测, img-url=shield.lefthalf.filled.system
