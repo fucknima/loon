@@ -1,0 +1,10 @@
+#!name = IPPure IP纯净度检测 V3
+#!desc = 长按任意节点，通过 IPPure 检测出口IP、ASN、风险评分、住宅/机房及原生/广播属性。V3为全新缓存隔离版本。
+#!author = fucknima
+#!system = iOS,iPadOS,tvOS,macOS
+#!loon_version = 3.3.2(877)
+#!homepage = https://ippure.com/
+#!icon = https://ippure.com/favicon.ico
+
+[Script]
+generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness_v3.js, tag=IPPure纯净度检测V3, timeout=15, img-url=shield.lefthalf.filled.system, enabled=true
