@@ -1,5 +1,5 @@
 #!name=IPPure IP纯净度检测
-#!desc=长按任意节点，通过 IPPure 公共接口检测出口IP、ASN、风险评分、住宅/机房及原生/广播属性
+#!desc=长按任意节点，通过 IPPure 检测出口IP、ASN、风险评分、住宅/机房及原生/广播属性
 #!author=fucknima
 #!system=iOS,iPadOS,tvOS,macOS
 #!loon_version=3.3.2(877)
@@ -7,4 +7,4 @@
 #!icon=https://ippure.com/favicon.ico
 
 [Script]
-generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness.js?v=2, timeout=15, tag=IPPure纯净度检测, img-url=shield.lefthalf.filled.system
+generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness.js,tag=IPPure纯净度检测,timeout=20,img-url=shield.lefthalf.filled.system
