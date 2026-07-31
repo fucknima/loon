@@ -1,10 +1,9 @@
 #!name=IP纯净度检测
-#!desc=长按节点，通过 IPPure + ipapi.is 双源检测；IPv4联合判断，IPv6自动以ipapi.is为主并明确提示IPPure不评分
+#!desc=长按节点检测出口IP风险、网络属性及代理标记；IPv6以ipapi.is为主
 #!author=fucknima
-#!system=iOS,iPadOS,tvOS,macOS
+#!system=iOS,iPadOS,macOS
 #!loon_version=3.3.2(877)
-#!homepage=https://ippure.com/
-#!icon=https://ippure.com/favicon.ico
+#!icon=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Icon/IP_Purity_Shield.png
 
 [Script]
 generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness.js,tag=IPPure纯净度检测,timeout=30,img-url=shield.lefthalf.filled.system
