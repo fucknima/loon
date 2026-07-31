@@ -1,9 +1,9 @@
 /*
  * IPPure + ipapi.is IP纯净度检测 · Loon Generic Script
- * 内部版本：5.2（固定文件名更新，不使用版本后缀）
+ * 内部版本：5.3（固定文件名更新，不使用版本后缀）
  * 更新日期：2026-07-31
  *
- * 设计：使用 Loon 弹窗兼容性更好的 table 布局，不使用 Flex/Grid。
+ * 布局：明确区分 IPPure、ipapi.is 与本地综合判断的数据来源。
  * 查询：IPPure 走被检测节点；ipapi.is 使用 DIRECT，并自动切换备用服务器。
  * 缓存：相同出口 IP 的 ipapi.is 成功结果缓存 24 小时。
  */
@@ -77,7 +77,10 @@ let htmlMessage = simpleHtml(content)
   }
 
   if (!ippure && !ipapi) {
-    throw new Error('两个接口均失败；IPPure：' + (ippureError || '未知') + '；ipapi.is：' + (ipapiError || '未知'))
+    throw new Error(
+      '两个接口均失败；IPPure：' + (ippureError || '未知') +
+      '；ipapi.is：' + (ipapiError || '未知')
+    )
   }
 
   const report = buildReport({
@@ -110,6 +113,7 @@ async function queryIpapi(ip) {
 
   for (let i = 0; i < IPAPI_SERVERS.length; i++) {
     const server = IPAPI_SERVERS[i]
+
     try {
       const data = await requestJson({
         url: server.url + query,
@@ -145,28 +149,67 @@ async function queryIpapi(ip) {
 function buildReport(ctx) {
   const p = ctx.ippure
   const a = ctx.ipapi
-  const ip = get(p, 'ip', get(a, 'ip', '未知'))
+  const hasIppure = Object.keys(p).length > 0
+  const hasIpapi = Object.keys(a).length > 0
+
+  const ipInfo = pick([
+    { value: get(p, 'ip', ''), source: 'IPPure' },
+    { value: get(a, 'ip', ''), source: 'ipapi.is' },
+  ], '未知')
 
   const scoreNumber = Number(get(p, 'fraudScore', NaN))
   const score = Number.isFinite(scoreNumber) ? scoreNumber : null
   const assessment = assess(score, a, p)
 
-  const locationObject = get(a, 'location', {}) || {}
-  const country = get(p, 'country', get(locationObject, 'country', ''))
-  const region = get(p, 'region', get(locationObject, 'state', ''))
-  const city = get(p, 'city', get(locationObject, 'city', ''))
-  const countryCode = get(p, 'countryCode', get(locationObject, 'country_code', ''))
-  const location = unique([country, region, city]).join(' · ') || '未知'
-  const locationText = (flag(countryCode) + ' ' + location).trim()
+  const pLocationParts = unique([
+    get(p, 'country', ''),
+    get(p, 'region', ''),
+    get(p, 'city', ''),
+  ])
+  const aLocation = get(a, 'location', {}) || {}
+  const aLocationParts = unique([
+    get(aLocation, 'country', ''),
+    get(aLocation, 'state', ''),
+    get(aLocation, 'city', ''),
+  ])
+
+  const locationInfo = pLocationParts.length
+    ? {
+        value: (flag(get(p, 'countryCode', '')) + ' ' + pLocationParts.join(' · ')).trim(),
+        source: 'IPPure',
+      }
+    : aLocationParts.length
+      ? {
+          value: (flag(get(aLocation, 'country_code', '')) + ' ' + aLocationParts.join(' · ')).trim(),
+          source: 'ipapi.is',
+        }
+      : { value: '未知', source: '—' }
 
   const asnObject = get(a, 'asn', {}) || {}
   const companyObject = get(a, 'company', {}) || {}
-  const asnNumber = get(asnObject, 'asn', get(p, 'asn', ''))
+  const ipapiAsn = get(asnObject, 'asn', '')
+  const ippureAsn = get(p, 'asn', '')
   const asnType = translateType(get(asnObject, 'type', get(companyObject, 'type', '')))
-  const asnText = asnNumber
-    ? 'AS' + String(asnNumber).replace(/^AS/i, '') + (asnType ? ' · ' + asnType : '')
-    : '未知'
-  const organization = get(companyObject, 'name', get(asnObject, 'org', get(p, 'asOrganization', '未知')))
+
+  const asnInfo = ipapiAsn
+    ? {
+        value: 'AS' + String(ipapiAsn).replace(/^AS/i, '') + (asnType ? ' · ' + asnType : ''),
+        source: 'ipapi.is',
+      }
+    : ippureAsn
+      ? {
+          value: 'AS' + String(ippureAsn).replace(/^AS/i, ''),
+          source: 'IPPure',
+        }
+      : { value: '未知', source: '—' }
+
+  const ipapiOrg = get(companyObject, 'name', get(asnObject, 'org', ''))
+  const ippureOrg = get(p, 'asOrganization', '')
+  const organizationInfo = ipapiOrg
+    ? { value: ipapiOrg, source: 'ipapi.is' }
+    : ippureOrg
+      ? { value: ippureOrg, source: 'IPPure' }
+      : { value: '未知', source: '—' }
 
   const residential = normalizeBoolean(get(p, 'isResidential', null))
   const broadcast = normalizeBoolean(get(p, 'isBroadcast', null))
@@ -176,15 +219,13 @@ function buildReport(ctx) {
   const tor = normalizeBoolean(get(a, 'is_tor', null))
   const abuser = normalizeBoolean(get(a, 'is_abuser', null))
 
-  const networkLabel = residential === true
+  const residentialText = residential === true
     ? '住宅 IP'
-    : datacenter === true
-      ? '机房 IP'
-      : residential === false
-        ? '非住宅 IP'
-        : '未知'
+    : residential === false
+      ? '非住宅 IP'
+      : '未知'
 
-  const nativeLabel = broadcast === true
+  const nativeText = broadcast === true
     ? '广播 / 非原生'
     : broadcast === false
       ? '原生 IP'
@@ -193,80 +234,119 @@ function buildReport(ctx) {
   const scoreText = score === null ? '--' : String(score)
   const scoreSuffix = score === null ? '无评分' : '/100'
 
-  const sourceText = sourceStatus(ctx)
   const cacheText = ctx.cacheHit
-    ? '缓存 ' + duration(ctx.cacheAge) + '前'
+    ? '缓存 · ' + duration(ctx.cacheAge) + '前'
     : ctx.ipapiServer
       ? '实时 · ' + ctx.ipapiServer
       : '未获取'
 
-  const statusRows = [
-    [statusCell('网络', networkLabel, toneForNetwork(networkLabel)), statusCell('属性', nativeLabel, toneForNative(nativeLabel))],
-    [statusCell('VPN', yesNo(vpn), toneForRisk(vpn)), statusCell('代理', yesNo(proxy), toneForRisk(proxy))],
-    [statusCell('Tor', yesNo(tor), toneForRisk(tor)), statusCell('滥用', yesNo(abuser), toneForRisk(abuser))],
+  const ippureStatus = hasIppure
+    ? '正常'
+    : '失败' + (ctx.ippureError ? ' · ' + shortError(ctx.ippureError) : '')
+
+  const ipapiStatus = hasIpapi
+    ? cacheText
+    : '失败' + (ctx.ipapiError ? ' · ' + shortError(ctx.ipapiError) : '')
+
+  const ippureRows = [
+    [
+      statusCell('住宅属性', residentialText, toneForResidential(residential)),
+      statusCell('IP 属性', nativeText, toneForNative(nativeText)),
+    ],
+  ]
+
+  const ipapiRows = [
+    [
+      statusCell('机房', yesNo(datacenter), toneForRisk(datacenter)),
+      statusCell('VPN', yesNo(vpn), toneForRisk(vpn)),
+    ],
+    [
+      statusCell('代理', yesNo(proxy), toneForRisk(proxy)),
+      statusCell('Tor', yesNo(tor), toneForRisk(tor)),
+    ],
+    [
+      statusCell('滥用', yesNo(abuser), toneForRisk(abuser)),
+      statusCell('接口', hasIpapi ? '正常' : '失败', hasIpapi ? 'good' : 'bad'),
+    ],
   ]
 
   const detailRows = [
-    ['出口 IP', ip],
-    ['国家地区', locationText],
-    ['ASN', asnText],
-    ['运营商', organization || '未知'],
-    ['当前节点', ctx.nodeName || '未知'],
+    ['出口 IP', ipInfo.value, ipInfo.source],
+    ['国家地区', locationInfo.value, locationInfo.source],
+    ['ASN', asnInfo.value, asnInfo.source],
+    ['运营商', organizationInfo.value, organizationInfo.source],
+    ['当前节点', ctx.nodeName || '未知', 'Loon'],
   ]
-
-  let debugLine = ''
-  if (ctx.ipapiError) {
-    debugLine = '<br><span style="color:#FF453A;">ipapi.is：' + escapeHtml(shortError(ctx.ipapiError)) + '</span>'
-  }
-  if (ctx.ippureError) {
-    debugLine += '<br><span style="color:#FF453A;">IPPure：' + escapeHtml(shortError(ctx.ippureError)) + '</span>'
-  }
 
   const html = `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;font-size:15px;line-height:1.45;color:inherit;padding:2px 4px 4px;word-break:break-word;">
-  <div style="text-align:center;padding:6px 0 12px;">
-    <div style="font-size:13px;color:#8E8E93;">IPPure 风险评分</div>
-    <div style="font-size:48px;line-height:1.08;font-weight:800;color:${assessment.color};">${escapeHtml(scoreText)}<span style="font-size:16px;font-weight:600;">${escapeHtml(scoreSuffix)}</span></div>
-    <div style="font-size:18px;font-weight:700;color:${assessment.color};margin-top:3px;">${escapeHtml(assessment.icon + ' ' + assessment.label)}</div>
+  <div style="text-align:center;padding:5px 0 12px;">
+    <div style="font-size:12px;color:#8E8E93;">IPPure 风险评分</div>
+    <div style="font-size:46px;line-height:1.08;font-weight:800;color:${assessment.color};">${escapeHtml(scoreText)}<span style="font-size:15px;font-weight:600;">${escapeHtml(scoreSuffix)}</span></div>
+    <div style="font-size:17px;font-weight:700;color:${assessment.color};margin-top:3px;">${escapeHtml(assessment.icon + ' ' + assessment.label)}</div>
+    <div style="font-size:11px;color:#8E8E93;margin-top:3px;">本地综合判断 · IPPure + ipapi.is</div>
   </div>
 
-  <table style="width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 10px;" cellpadding="0" cellspacing="0">
-    ${statusRows.map(statusTableRow).join('')}
+  ${sectionHeader('IPPure 检测', ippureStatus, hasIppure)}
+  <table style="width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 11px;" cellpadding="0" cellspacing="0">
+    ${ippureRows.map(statusTableRow).join('')}
   </table>
 
+  ${sectionHeader('ipapi.is 检测', ipapiStatus, hasIpapi)}
+  <table style="width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 11px;" cellpadding="0" cellspacing="0">
+    ${ipapiRows.map(statusTableRow).join('')}
+  </table>
+
+  ${sectionHeader('基础信息', '每行已标注来源', true)}
   <table style="width:100%;border-collapse:collapse;table-layout:fixed;" cellpadding="0" cellspacing="0">
     ${detailRows.map(detailTableRow).join('')}
   </table>
 
   <div style="font-size:11px;line-height:1.45;text-align:center;color:#8E8E93;margin-top:10px;">
-    ${escapeHtml(sourceText)} · ipapi.is ${escapeHtml(cacheText)}
-    ${debugLine}
+    综合判断由脚本本地汇总，仅供筛选
   </div>
 </div>`.trim()
 
   const text = [
+    '【本地综合判断】' + assessment.label,
+    '',
+    '【IPPure】',
     '风险评分：' + (score === null ? '未知' : score + '/100'),
-    '综合结论：' + assessment.label,
-    '出口 IP：' + ip,
-    '国家地区：' + locationText,
-    '网络类型：' + networkLabel,
-    'IP 属性：' + nativeLabel,
+    '住宅属性：' + residentialText,
+    'IP 属性：' + nativeText,
+    '接口状态：' + ippureStatus,
+    '',
+    '【ipapi.is】',
+    '机房：' + yesNo(datacenter),
     'VPN：' + yesNo(vpn),
     '代理：' + yesNo(proxy),
     'Tor：' + yesNo(tor),
     '滥用：' + yesNo(abuser),
-    'ASN：' + asnText,
-    '运营商：' + (organization || '未知'),
-    '节点：' + (ctx.nodeName || '未知'),
-    '数据源：' + sourceText,
-    ctx.ipapiError ? 'ipapi.is 错误：' + ctx.ipapiError : '',
-  ].filter(Boolean).join('\n')
+    '接口状态：' + ipapiStatus,
+    '',
+    '【基础信息】',
+    '出口 IP：' + ipInfo.value + '（' + ipInfo.source + '）',
+    '国家地区：' + locationInfo.value + '（' + locationInfo.source + '）',
+    'ASN：' + asnInfo.value + '（' + asnInfo.source + '）',
+    '运营商：' + organizationInfo.value + '（' + organizationInfo.source + '）',
+    '节点：' + (ctx.nodeName || '未知') + '（Loon）',
+  ].join('\n')
 
   return {
-    title: 'IP纯净度 · ' + ip,
+    title: 'IP纯净度 · ' + ipInfo.value,
     content: text,
     htmlMessage: html,
   }
+}
+
+function sectionHeader(name, status, ok) {
+  const color = ok ? '#30A84A' : '#FF453A'
+  return '<table style="width:100%;border-collapse:collapse;margin:0 0 3px;" cellpadding="0" cellspacing="0">' +
+    '<tr>' +
+      '<td style="padding:4px 2px;font-size:14px;font-weight:750;">' + escapeHtml(name) + '</td>' +
+      '<td style="padding:4px 2px;text-align:right;font-size:11px;color:' + color + ';">' + escapeHtml(status) + '</td>' +
+    '</tr>' +
+  '</table>'
 }
 
 function statusTableRow(cells) {
@@ -277,25 +357,50 @@ function statusTableRow(cells) {
 }
 
 function statusCell(label, valueText, tone) {
-  const color = tone === 'good' ? '#30D158' : tone === 'warn' ? '#FF9F0A' : tone === 'bad' ? '#FF453A' : '#8E8E93'
-  const dot = tone === 'good' ? '●' : tone === 'warn' ? '●' : tone === 'bad' ? '●' : '○'
-  return '<span style="font-size:12px;color:#8E8E93;">' + escapeHtml(label) + '</span><br>' +
-    '<span style="font-size:14px;font-weight:700;color:' + color + ';">' + dot + ' ' + escapeHtml(valueText) + '</span>'
+  const color = tone === 'good'
+    ? '#30A84A'
+    : tone === 'warn'
+      ? '#FF9F0A'
+      : tone === 'bad'
+        ? '#FF453A'
+        : '#8E8E93'
+
+  const dot = tone === 'neutral' ? '○' : '●'
+
+  return '<span style="font-size:11px;color:#8E8E93;">' + escapeHtml(label) + '</span><br>' +
+    '<span style="font-size:14px;font-weight:700;color:' + color + ';">' +
+      dot + ' ' + escapeHtml(valueText) +
+    '</span>'
 }
 
 function detailTableRow(item) {
   return '<tr>' +
-    '<td style="width:29%;padding:8px 6px 8px 2px;color:#8E8E93;border-bottom:1px solid rgba(128,128,128,.16);">' + escapeHtml(item[0]) + '</td>' +
-    '<td style="width:71%;padding:8px 2px 8px 6px;text-align:right;font-weight:600;border-bottom:1px solid rgba(128,128,128,.16);">' + escapeHtml(item[1]) + '</td>' +
+    '<td style="width:31%;padding:8px 6px 8px 2px;border-bottom:1px solid rgba(128,128,128,.16);">' +
+      '<span style="color:#8E8E93;">' + escapeHtml(item[0]) + '</span><br>' +
+      '<span style="font-size:10px;color:#467FCF;">来源：' + escapeHtml(item[2]) + '</span>' +
+    '</td>' +
+    '<td style="width:69%;padding:8px 2px 8px 6px;text-align:right;font-weight:600;border-bottom:1px solid rgba(128,128,128,.16);">' +
+      escapeHtml(item[1]) +
+    '</td>' +
     '</tr>'
 }
 
+function pick(items, fallback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    if (item && item.value !== null && typeof item.value !== 'undefined' && String(item.value) !== '') {
+      return item
+    }
+  }
+  return { value: fallback, source: '—' }
+}
+
 function assess(score, ipapi, ippure) {
-  const abuser = get(ipapi, 'is_abuser', false) === true
-  const tor = get(ipapi, 'is_tor', false) === true
-  const bogon = get(ipapi, 'is_bogon', false) === true
-  const broadcast = get(ippure, 'isBroadcast', false) === true
-  const datacenter = get(ipapi, 'is_datacenter', false) === true
+  const abuser = normalizeBoolean(get(ipapi, 'is_abuser', null)) === true
+  const tor = normalizeBoolean(get(ipapi, 'is_tor', null)) === true
+  const bogon = normalizeBoolean(get(ipapi, 'is_bogon', null)) === true
+  const broadcast = normalizeBoolean(get(ippure, 'isBroadcast', null)) === true
+  const datacenter = normalizeBoolean(get(ipapi, 'is_datacenter', null)) === true
 
   if (abuser || tor || bogon || (score !== null && score >= 70)) {
     return { label: '风险较高', icon: '🔴', color: '#FF453A' }
@@ -312,9 +417,9 @@ function assess(score, ipapi, ippure) {
   return { label: '信息不足', icon: '⚪', color: '#8E8E93' }
 }
 
-function toneForNetwork(text) {
-  if (text === '住宅 IP') return 'good'
-  if (text === '机房 IP' || text === '非住宅 IP') return 'warn'
+function toneForResidential(value) {
+  if (value === true) return 'good'
+  if (value === false) return 'warn'
   return 'neutral'
 }
 
@@ -328,12 +433,6 @@ function toneForRisk(value) {
   if (value === true) return 'bad'
   if (value === false) return 'good'
   return 'neutral'
-}
-
-function sourceStatus(ctx) {
-  const p = Object.keys(ctx.ippure || {}).length ? 'IPPure正常' : 'IPPure失败'
-  const a = Object.keys(ctx.ipapi || {}).length ? 'ipapi.is正常' : 'ipapi.is失败'
-  return p + ' · ' + a
 }
 
 function requestJson(options, source) {
@@ -388,9 +487,11 @@ function readCache(ip) {
   try {
     const raw = $persistentStore.read(CACHE_PREFIX + sanitizeKey(ip))
     if (!raw) return null
+
     const parsed = JSON.parse(raw)
     if (!parsed || !parsed.timestamp || !parsed.data) return null
     if (Date.now() - Number(parsed.timestamp) > CACHE_TTL) return null
+
     return parsed
   } catch (e) {
     return null
@@ -399,7 +500,10 @@ function readCache(ip) {
 
 function writeCache(ip, data, server) {
   try {
-    $persistentStore.write(JSON.stringify({ timestamp: Date.now(), data, server }), CACHE_PREFIX + sanitizeKey(ip))
+    $persistentStore.write(
+      JSON.stringify({ timestamp: Date.now(), data, server }),
+      CACHE_PREFIX + sanitizeKey(ip)
+    )
   } catch (e) {}
 }
 
@@ -411,10 +515,12 @@ function get(object, path, fallback) {
   try {
     const parts = String(path).split('.')
     let current = object
+
     for (let i = 0; i < parts.length; i++) {
       if (current === null || typeof current === 'undefined') return fallback
       current = current[parts[i]]
     }
+
     return current === null || typeof current === 'undefined' ? fallback : current
   } catch (e) {
     return fallback
@@ -462,13 +568,12 @@ function duration(ms) {
   const minutes = Math.floor(Number(ms || 0) / 60000)
   if (minutes < 1) return '不足1分钟'
   if (minutes < 60) return minutes + '分钟'
-  const hours = Math.floor(minutes / 60)
-  return hours + '小时'
+  return Math.floor(minutes / 60) + '小时'
 }
 
 function shortError(text) {
   const valueText = String(text || '').replace(/\s+/g, ' ')
-  return valueText.length > 110 ? valueText.slice(0, 110) + '…' : valueText
+  return valueText.length > 70 ? valueText.slice(0, 70) + '…' : valueText
 }
 
 function errorText(error) {
