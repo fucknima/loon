@@ -1,0 +1,10 @@
+#!name=IPPure IP纯净度检测 V4
+#!desc=长按节点后通过 IPPure 查询出口IP、风险评分、ASN、住宅/机房及原生/广播属性。V4同时返回content与htmlMessage，兼容不同交互识别方式。
+#!author=fucknima
+#!system=iOS,iPadOS,tvOS,macOS
+#!loon_version=3.3.2(877)
+#!homepage=https://ippure.com/
+#!icon=https://ippure.com/favicon.ico
+
+[Script]
+generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPPure_IP_Cleanliness_v4.js,tag=IPPure纯净度检测V4,timeout=20,img-url=shield.lefthalf.filled.system
