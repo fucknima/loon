@@ -1,0 +1,9 @@
+#!name=IPSuper聚合检测
+#!desc=长按节点，通过IPSuper聚合页面检测综合安全分、威胁数量、IP类型、位置及ASN
+#!author=fucknima
+#!system=iOS,iPadOS,macOS
+#!loon_version=3.3.2(877)
+#!icon=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Icon/IP_Purity_Shield.png
+
+[Script]
+generic script-path=https://raw.githubusercontent.com/fucknima/loon/main/Tool/Loon/Script/IPSuper_IP_Check.js,tag=IPSuper聚合检测,timeout=35,img-url=shield.checkered.system
