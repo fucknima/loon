@@ -1,0 +1,28 @@
+# ============================================================
+# Apple Intelligence / iOS Writing Tools / ChatGPT Extension
+# Loon Remote Rule (.lsr) — choose an overseas policy in Loon
+# This file intentionally has NO policy column: policy is assigned
+# by Loon's [Remote Rule] subscription.
+#
+# Reference: https://support.apple.com/101555
+# Apple AI relay traffic may use TCP/UDP 443. Do not MITM it.
+# ============================================================
+
+# Apple Intelligence / Private Cloud Compute (Apple documented)
+DOMAIN,apple-relay.apple.com
+DOMAIN,apple-relay.cloudflare.com
+DOMAIN,apple-relay.fastly-edge.com
+DOMAIN,cp4.cloudflare.com
+
+# Siri / search (Apple documented; may also affect related services)
+DOMAIN,guzzoni.apple.com
+DOMAIN-SUFFIX,smoot.apple.com
+
+# Related Apple Intelligence / Siri endpoints (community reported)
+DOMAIN,gspe1-ssl.ls.apple.com
+DOMAIN,apple-relay.akamaized.net
+DOMAIN,apple-relay.mask.apple-dns.net
+
+# ChatGPT extension sign-in and network requests
+DOMAIN-SUFFIX,openai.com
+DOMAIN-SUFFIX,chatgpt.com
