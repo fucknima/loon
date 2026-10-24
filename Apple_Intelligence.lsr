@@ -26,30 +26,3 @@ DOMAIN,apple-relay.mask.apple-dns.net
 # ChatGPT extension sign-in and network requests
 DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,chatgpt.com
-# ============================================================
-# Meta Muse — app, login, secure VM and generated content
-# Community-reported endpoints; Meta may change them at any time.
-# For consistent geolocation use the SAME US proxy policy as above.
-# ============================================================
-
-# Muse website and application API
-DOMAIN-SUFFIX,muse.ai
-DOMAIN-SUFFIX,museai.com
-DOMAIN-SUFFIX,meta.ai
-
-# Muse runtime / secure browser / agents
-DOMAIN-SUFFIX,metaaivm.com
-DOMAIN-SUFFIX,ecto1.ai
-DOMAIN-SUFFIX,ecto1usercontent.com
-DOMAIN-SUFFIX,metaaiusercontent.com
-DOMAIN,meta-agents-apps.workers.dev
-
-# Meta account authentication and related services
-DOMAIN-SUFFIX,meta.com
-DOMAIN,ep7.facebook.com
-DOMAIN-SUFFIX,facebook.com
-DOMAIN-SUFFIX,facebook.net
-DOMAIN-SUFFIX,fb.com
-DOMAIN-SUFFIX,fbcdn.net
-DOMAIN-SUFFIX,fbsbx.com
-
