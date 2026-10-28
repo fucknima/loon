@@ -1,5 +1,5 @@
 # =============================================================================
-# Apple Intelligence + Siri / Siri AI + ChatGPT Extension
+# Apple Intelligence + Photos Extend / Spatial Reframing + Siri AI + ChatGPT
 # Loon Remote Rule (.lsr) | Updated: 2026-10-28
 # Repository: https://github.com/fucknima/loon
 #
@@ -34,6 +34,15 @@
 DOMAIN,apple-relay.apple.com
 
 # Private Cloud Compute (PCC)：私有云计算，TCP/UDP 443
+# iOS 27 照片 App 高级编辑共享 PCC 通道：
+# - 扩图 / 扩展（Photos Extend）：生成照片边缘缺失内容
+# - 空间构图（Spatial Reframing）：本机预览构图，云端生成补全
+# - 增强版消除（Improved Clean Up）：复杂编辑可能使用云端模型
+# - 图乐园（Image Playground）：新一代生成模型也使用 PCC
+# 说明：这些功能没有 Apple 官方公布的独立专用域名；
+# 下方为 Apple 官方披露的共享 PCC 域名，不能保证所有请求均被代理。
+# Photo features: https://support.apple.com/en-us/121115
+# WWDC26 explanation: https://developer.apple.com/videos/play/wwdc2026/101/
 DOMAIN,apple-relay.cloudflare.com
 DOMAIN,apple-relay.fastly-edge.com
 DOMAIN,cp4.cloudflare.com
