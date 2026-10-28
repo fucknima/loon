@@ -1,28 +1,110 @@
-# ============================================================
-# Apple Intelligence / iOS Writing Tools / ChatGPT Extension
-# Loon Remote Rule (.lsr) — choose an overseas policy in Loon
-# This file intentionally has NO policy column: policy is assigned
-# by Loon's [Remote Rule] subscription.
+# =============================================================================
+# Apple Intelligence + Siri / Siri AI + ChatGPT Extension
+# Loon Remote Rule (.lsr) | Updated: 2026-10-28
+# Repository: https://github.com/fucknima/loon
 #
-# Reference: https://support.apple.com/101555
-# Apple AI relay traffic may use TCP/UDP 443. Do not MITM it.
-# ============================================================
+# Usage / 使用方法：
+# [Remote Rule]
+# https://raw.githubusercontent.com/fucknima/loon/main/Apple_Intelligence.lsr, policy=AppleAI, tag=Apple Intelligence, enabled=true
+#
+# IMPORTANT:
+# 1. Policy is selected in Loon's Remote Rule; these rules have NO policy field.
+# 2. Prefer a stable eligible-region node; verify TCP/UDP 443 connectivity.
+# 3. Never MITM/decrypt Apple's encrypted AI relay endpoints.
+# 4. This file is NOT a region-unlock mechanism and cannot override device eligibility.
+# 5. Avoid proxying all apple.com, icloud.com, mzstatic.com or apple-dns.net.
+# 6. Keep Apple AI policy consistent with ChatGPT extension sign-in when testing.
+#
+# Source A (official):
+# https://support.apple.com/zh-cn/101555
+# Source B (Apple Intelligence + ChatGPT setup):
+# https://help.openai.com/en/articles/10269382-setting-up-chatgpt-with-apple-intelligence
+# Source C (OpenAI domain allowlist):
+# https://help.openai.com/en/articles/9247338-network-recommendations-for-chatgpt-errors-on-web-and-apps
+# Source D (community, NOT Apple confirmation):
+# https://github.com/Loyalsoldier/v2ray-rules-dat/issues/504
+# =============================================================================
 
-# Apple Intelligence / Private Cloud Compute (Apple documented)
+
+# =============================================================================
+# A. Apple 官方明确列出的 AI / Siri 网络端点（6 条）
+# =============================================================================
+
+# Apple Intelligence Extensions：Apple 智能扩展
 DOMAIN,apple-relay.apple.com
+
+# Private Cloud Compute (PCC)：私有云计算，TCP/UDP 443
 DOMAIN,apple-relay.cloudflare.com
 DOMAIN,apple-relay.fastly-edge.com
 DOMAIN,cp4.cloudflare.com
 
-# Siri / search (Apple documented; may also affect related services)
+# Siri / 听写请求，TCP 443
 DOMAIN,guzzoni.apple.com
+
+# Siri / Spotlight / Safari 等搜索服务，TCP 443
+# 使用后缀匹配官方的 *.smoot.apple.com
 DOMAIN-SUFFIX,smoot.apple.com
 
-# Related Apple Intelligence / Siri endpoints (community reported)
+
+# =============================================================================
+# B. 兼容性补充（5 条）
+# 2026-04 社区报告可改善 Apple Intelligence / ChatGPT 扩展登录。
+# 与官方「AI 专用域名」不同，部分端点还服务于其他 Apple 功能。
+# =============================================================================
+
+# CloudKit 内容网关；可能同时影响其他 iCloud/系统内容访问
+DOMAIN,gateway.icloud.com
+
+# Apple 媒体资源域名；可能同时影响商店资源
+DOMAIN,aapps.mzstatic.com
+
+# Apple 地理位置/关联服务端点（社区补充）
 DOMAIN,gspe1-ssl.ls.apple.com
+
+# 其他 Apple relay / CDN 端点（社区补充）
 DOMAIN,apple-relay.akamaized.net
 DOMAIN,apple-relay.mask.apple-dns.net
 
-# ChatGPT extension sign-in and network requests
+
+# =============================================================================
+# C. OpenAI / ChatGPT 扩展相关（6 条）
+# OpenAI 官方域名允许列表；并非表示所有端点必然由苹果扩展调用。
+# 精确限定在 OpenAI 自有域名，避免影响常规苹果服务。
+# =============================================================================
+
+# ChatGPT API、帐号登录、扩展调用
 DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,chatgpt.com
+
+# Web 静态资源 / 对话附件 / 实验服务
+DOMAIN-SUFFIX,oaistatic.com
+DOMAIN-SUFFIX,oaiusercontent.com
+DOMAIN-SUFFIX,oaistatsig.com
+
+# OpenAI 前端 CDN
+DOMAIN,cdn.openaimerge.com
+
+
+# =============================================================================
+# D. 可选：只有抓到登录失败或挑战页面对应域名时才启用
+# 请删除行首的 "# " 来启用；这些是多站点共用服务，默认不代理。
+# OpenAI 官方网络列表包含这些域名，但不能证明苹果扩展必然用到。
+# =============================================================================
+# DOMAIN,cdn.workos.com
+# DOMAIN,setup.workos.com
+# DOMAIN,forwarder.workos.com
+# DOMAIN,frontend-apps-multi-region.workos.com
+# DOMAIN,images.workoscdn.com
+# DOMAIN,workos.imgix.net
+# DOMAIN,challenges.cloudflare.com
+
+
+# =============================================================================
+# E. 刻意不加入 / Exclusions (NOT rules)
+#
+# apple.com / icloud.com / apple-dns.net / mzstatic.com 整站
+# 17.0.0.0/8 全部苹果网段
+# mask.icloud.com / mask-api.icloud.com：iCloud Private Relay
+# humb.apple.com / idmsa.apple.com：设备与 Apple 帐户通用认证
+# 以上流量可能影响 App Store、iCloud、设备激活或隐私转送。
+# =============================================================================
