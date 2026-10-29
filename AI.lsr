@@ -1,0 +1,115 @@
+# =============================================================================
+# AI Services - Loon Remote Rule (.lsr)
+# 独立整理版 | 2026-10-29
+# Repository: https://github.com/fucknima/loon
+#
+# 本规则由公开服务端点资料独立整理，不是 kelee.one 的 AI.lsr 镜像或原文。
+# 无策略字段：在 Loon [Remote Rule] 中设置 policy。
+# 用法：
+# https://raw.githubusercontent.com/fucknima/loon/main/AI.lsr, policy=节点选择, tag=AI Services, enabled=true
+#
+# 使用注意：
+# - 默认只匹配明确与 AI 服务有关的域名，不对 google.com、bing.com、
+#   microsoft.com、x.com、cloudflare.com 等共享服务进行整站分流。
+# - 不包括 Apple Intelligence 的通用 Apple 云服务；请继续使用
+#   Apple_Intelligence.lsr / Muse.lsr。
+# - 站点域名可能更新；仅匹配域名不能保证服务地区解锁或全部功能可用。
+# =============================================================================
+
+# 01. OpenAI / ChatGPT / API / Codex
+DOMAIN-SUFFIX,openai.com
+DOMAIN-SUFFIX,chatgpt.com
+DOMAIN-SUFFIX,oaistatic.com
+DOMAIN-SUFFIX,oaiusercontent.com
+DOMAIN-SUFFIX,oaistatsig.com
+DOMAIN,cdn.openaimerge.com
+DOMAIN,cdn.platform.openai.com
+
+# Azure 动态端点：使用 Loon AND 避免将整个共享 CDN 代理
+AND, ((DOMAIN-KEYWORD, chatgpt-async-webps-prod-), (DOMAIN-SUFFIX, webpubsub.azure.com))
+AND, ((DOMAIN-KEYWORD, openaicom-api-), (DOMAIN-SUFFIX, azurefd.net))
+
+# 仅在 OpenAI 登录遭到共享第三方验证阻断时，才考虑启用：
+# DOMAIN,cdn.workos.com
+# DOMAIN,setup.workos.com
+# DOMAIN,forwarder.workos.com
+# DOMAIN,frontend-apps-multi-region.workos.com
+# DOMAIN,images.workoscdn.com
+# DOMAIN,workos.imgix.net
+# DOMAIN,challenges.cloudflare.com
+
+# 02. Anthropic / Claude / Claude Code
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
+DOMAIN-SUFFIX,claude.com
+DOMAIN-SUFFIX,claude.app
+DOMAIN-SUFFIX,claudeusercontent.com
+DOMAIN-SUFFIX,claudemcpcontent.com
+DOMAIN-SUFFIX,clau.de
+
+# 03. Google Gemini / AI Studio / NotebookLM
+# 仅代理专用 AI 子域，避免所有 Google 流量改道
+DOMAIN,gemini.google.com
+DOMAIN,aistudio.google.com
+DOMAIN,ai.google.dev
+DOMAIN,generativelanguage.googleapis.com
+DOMAIN,aiplatform.googleapis.com
+DOMAIN,notebooklm.google.com
+
+# 04. xAI / Grok
+DOMAIN-SUFFIX,grok.com
+DOMAIN-SUFFIX,x.ai
+
+# 05. Microsoft Copilot
+# 不匹配全部 cloud.microsoft 或 office.com，以免影响常规办公
+DOMAIN,copilot.microsoft.com
+DOMAIN,copilot.cloud.microsoft
+DOMAIN,designer.microsoft.com
+
+# 06. Perplexity / Poe
+DOMAIN-SUFFIX,perplexity.ai
+DOMAIN-SUFFIX,pplx.ai
+DOMAIN-SUFFIX,poe.com
+
+# 07. Mistral / Vibe
+DOMAIN-SUFFIX,mistral.ai
+
+# 08. OpenRouter / Hosted model APIs
+DOMAIN-SUFFIX,openrouter.ai
+DOMAIN-SUFFIX,together.ai
+DOMAIN-SUFFIX,replicate.com
+
+# 09. Cursor / AI coding
+DOMAIN-SUFFIX,cursor.com
+DOMAIN-SUFFIX,cursor.sh
+DOMAIN-SUFFIX,cursor-cdn.com
+DOMAIN-SUFFIX,cursorapi.com
+DOMAIN-SUFFIX,cursorvm.com
+
+# 10. Other international AI services
+DOMAIN-SUFFIX,character.ai
+DOMAIN-SUFFIX,huggingface.co
+DOMAIN-SUFFIX,hf.co
+DOMAIN-SUFFIX,midjourney.com
+DOMAIN-SUFFIX,ideogram.ai
+DOMAIN-SUFFIX,runwayml.com
+DOMAIN-SUFFIX,suno.com
+DOMAIN-SUFFIX,elevenlabs.io
+DOMAIN-SUFFIX,stability.ai
+
+# 11. Optional domestic AI services
+# 默认不强制国内 AI 流量走海外代理，按需取消注释
+# DOMAIN-SUFFIX,deepseek.com
+# DOMAIN-SUFFIX,qwen.ai
+# DOMAIN-SUFFIX,kimi.com
+# DOMAIN-SUFFIX,moonshot.cn
+
+# Sources:
+# https://help.openai.com/en/articles/9247338-network-recommendations-for-chatgpt-errors-on-web-and-apps
+# https://platform.claude.com/docs/en/api/overview
+# https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-chat-requirements
+# https://docs.x.ai/grok/faq
+# https://prod.cursor.com/help/troubleshooting/network
+# https://help.mistral.ai/en/articles/682992-le-chat-is-now-vibe
+# Special AND forms documented in Script-Hub issue 45:
+# https://github.com/Script-Hub-Org/Script-Hub/issues/45
