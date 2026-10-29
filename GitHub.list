@@ -1,0 +1,38 @@
+# GitHub 分流规则 - Loon
+# 用途：GitHub 网站、Git/API、仓库下载、Raw、Release、Packages、Copilot
+# 格式：Loon Remote Rule；此文件只写匹配规则，代理策略在 Loon 里选择
+# 项目：https://github.com/fucknima/loon
+#
+# GitHub 网站、API、Gist、Codespaces 等
+DOMAIN-SUFFIX,github.com
+DOMAIN-SUFFIX,github.dev
+DOMAIN-SUFFIX,github.io
+DOMAIN-SUFFIX,github.blog
+DOMAIN-SUFFIX,github.community
+DOMAIN-SUFFIX,githubnext.com
+DOMAIN-SUFFIX,githubpreview.dev
+DOMAIN-SUFFIX,githubapp.com
+
+# 静态资源、Raw、用户内容、Release 附件、头像
+DOMAIN-SUFFIX,githubassets.com
+DOMAIN-SUFFIX,githubusercontent.com
+
+# Packages / Container Registry / GitHub Copilot
+DOMAIN-SUFFIX,ghcr.io
+DOMAIN-SUFFIX,githubcopilot.com
+
+# GitHub 相关服务及短链接
+DOMAIN-SUFFIX,dependabot.com
+DOMAIN-SUFFIX,git.io
+DOMAIN-SUFFIX,repo.new
+DOMAIN-SUFFIX,githubstatus.com
+DOMAIN-SUFFIX,githubuniverse.com
+DOMAIN-SUFFIX,myoctocat.com
+DOMAIN-SUFFIX,opensource.guide
+
+# GitHub 使用的部分 AWS S3 下载域名
+# 只匹配 GitHub 对应主机名，不代理整个 amazonaws.com
+DOMAIN-SUFFIX,github-cloud.s3.amazonaws.com
+DOMAIN-SUFFIX,github-production-release-asset-2e65be.s3.amazonaws.com
+DOMAIN-SUFFIX,github-production-repository-file-5c1aeb.s3.amazonaws.com
+DOMAIN-SUFFIX,github-production-user-asset-6210df.s3.amazonaws.com
